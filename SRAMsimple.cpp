@@ -3,21 +3,23 @@
  *  Library created by David Dubins, November 12th, 2018.
  *  Released into the public domain.
  */
-
+#include "mbed.h"
 #include "Arduino.h"
 #include "SRAMsimple.h"
+
+#define CS PI_0
 
 SRAMsimple::SRAMsimple(){/*nothing to construct*/}
 SRAMsimple::~SRAMsimple(){/*nothing to destruct*/}
 
-byte CS=10; // default CS global variable
+byte CS=PI_0; // default CS global variable
 
 /*  Set up the memory chip to either single byte or sequence of bytes mode **********/
-void SRAMsimple::SetMode(byte CSpin, char Mode){            // Select for single or multiple byte transfer
-  CS=CSpin; // set global variable CS to user-defined CS pin
+void SRAMsimple::SetMode(char Mode){            // Select for single or multiple byte transfer
+  // CS=CSpin; // set global variable CS to user-defined CS pin
   pinMode(CS, OUTPUT);	                        // set CS pin to output mode
   digitalWrite(CS, LOW);                        // set SPI slave select LOW
-  SPI.transfer(WRMR);                           // command to write to mode register
+  SPI.transfer(WRSR);                           // command to write to mode register
   SPI.transfer(Mode);                           // set for sequential mode
   digitalWrite(CS, HIGH);                       // release chip select to finish command
 }

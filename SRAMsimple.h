@@ -9,17 +9,24 @@
 
 #include <Arduino.h>
 #include <SPI.h>
-
-/************SRAM opcodes: commands to the 23LC1024 memory chip ******************/
-#define RDMR        5       // Read the Mode Register
-#define WRMR        1       // Write to the Mode Register
-#define READ        3       // Read command
-#define WRITE       2       // Write command
+#include "mbed.h"
+/************SRAM opcodes: commands for the 23AA04M SRAM memory chip ******************/
+#define RDSR        0x05       // Read the Mode Register
+#define WRSR        0x01       // Write to the Mode Register
+#define READ        0x03       // Read command
+#define HSREAD      0x0B
+#define WRITE       0x02       // Write command
 #define RSTIO     0xFF      // Reset memory to SPI mode
-#define ByteMode    0x00    // Byte mode (read/write one byte at a time)
-#define Sequential  0x40    // Sequential mode (read/write blocks of memory)
+#define ByteMode    0x0014    // Byte mode (read/write one byte at a time)
+#define Sequential  0x4014    // Sequential mode (read/write blocks of memory)
+#define PageMode  0x8014
 
 extern byte CS;		    // Global variable for CS pin (default 10)
+
+using namespace mbed;
+
+SPI spi(PC_3, PC_2, PI_1);            // MOSI,MISO,SCK, (CS not added here as it results in unexpected behaviour)
+
 
 class SRAMsimple {
   public:

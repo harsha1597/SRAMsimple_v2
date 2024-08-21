@@ -1,5 +1,5 @@
 # SRAMsimple
-Local SRAM library for 23LC1024 chip
+Local SRAM library for 23AA04M chip
 
 This library was created from the example program SPIRamSimple.ino, created by J.B. Gallaher on 07/09/2016. From the comments of this program:
 
