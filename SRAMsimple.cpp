@@ -11,7 +11,7 @@
 using namespace mbed;
 #define CS 0x80
 
-SRAMsimple::SRAMsimple(SPI& spi_param, uint8_t cs) : _spi(spi_param), cs(cs);
+SRAMsimple::SRAMsimple(SPI& spi_param) : _spi(spi_param)
 {
   // SPI _spi(PC_3, PC_2, PI_1);           // MOSI,MISO,SCK, (CS not added here as it results in unexpected behaviour)
   // _spi.frequency(freq);             // Set up your frequency.
