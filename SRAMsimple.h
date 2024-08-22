@@ -11,28 +11,30 @@
 #include <SPI.h>
 #include "mbed.h"
 /************SRAM opcodes: commands for the 23AA04M SRAM memory chip ******************/
-#define RDSR        0x05       // Read the Mode Register
-#define WRSR        0x01       // Write to the Mode Register
-#define READ        0x03       // Read command
-#define HSREAD      0x0B
-#define WRITE       0x02       // Write command
-#define RSTIO     0xFF      // Reset memory to SPI mode
-#define ByteMode    0x0014    // Byte mode (read/write one byte at a time)
-#define Sequential  0x4014    // Sequential mode (read/write blocks of memory)
-#define PageMode  0x8014
+#define RDSR        0x05000000 // Read status register
+#define WRSR        0x01000000
+#define READ        0x03000000 
+#define HSREAD      0x0B000000 // High Speed Read
+#define WRITE       0x02000000
+#define Sequential  0x00401400  // Sequential mode (read/write blocks of memory)
+#define ByteMode    0x00001400    // Byte mode (read/write one byte at a time)
+#define PageMode    0x00801400 // Page Mode
 
 extern byte CS;		    // Global variable for CS pin (default 10)
 
 using namespace mbed;
 
 SPI spi(PC_3, PC_2, PI_1);            // MOSI,MISO,SCK, (CS not added here as it results in unexpected behaviour)
-
+spi.frequency(100000000);             // Set up your frequency.
+spi.format(32, 0);                  // Messege length (bits), SPI_MODE - check these in your SPI decice's data sheet.
+  
 
 class SRAMsimple {
   public:
     SRAMsimple();
     ~SRAMsimple();
     void SetMode(byte CSpin, char Mode);
+    void ReadMode();
     void WriteByte(uint32_t address, byte data_byte);
     byte ReadByte(uint32_t address);
     void WriteByteArray(uint32_t address, byte *data, uint16_t big);

@@ -24,17 +24,27 @@
    Pin7 (HOLD) -- 10K -- +5V
    Pin8 (V+)  -- +5V
 */
-#include <SRAMsimple.h>
+#include "SRAMsimple.h"
+#include "mbed.h"
+#include "Arduino.h"
+using namespace mbed;
 
-#define CSPIN 10       // Default Chip Select Line for Uno (change as needed)
+#define CS PI_0       // Default Chip Select Line for Uno (change as needed)
 SRAMsimple sram;       //initialize an instance of this class
 
 /*******  Set up code to define variables and start the SCI and SPI serial interfaces  *****/
 void setup()
 {
+  pinMode(CS, OUTPUT);
+  digitalWrite(CS,HIGH);
+  
+  SPI spi(PC_3, PC_2, PI_1);            // MOSI,MISO,SCK, (CS not added here as it results in unexpected behaviour)
+  spi.frequency(100000000);             // Set up your frequency.
+  spi.format(32, 0);                  // Messege length (bits), SPI_MODE - check these in your SPI decice's data sheet.
+  
   uint32_t address = 0;                       // create a 32 bit variable to hold the address (uint32_t=long)
   Serial.begin(9600);                         // set communication speed for the serial monitor
-  SPI.begin();                                // start communicating with the memory chip
+                                 // start communicating with the memory chip
     
   // And now the fun begins:
   /**********Write a Single Byte *******************/
@@ -42,6 +52,8 @@ void setup()
   for(int i = 0; i <=5; i++){                 // Let's write 5 individual bytes to memory 
     address = i;                              // use the loop counter as the address
     sram.WriteByte(address, data);            // now write the data to that address
+    Serial.print("Write Data: ");                    // Let's see what we got
+    Serial.println(data);                    // Let's see what we got
     data+=2;                                  // increment the data by 2 
   }
 
@@ -51,58 +63,59 @@ void setup()
   for(int i = 0; i <=5; i++){                 // start at memory location 0 and end at 5
     address = i;                              // use the loop counter as the memory address
     value = sram.ReadByte(address);           // reads a byte of data at that memory location
+    Serial.print("Read Data: ");                    
     Serial.println(value);                    // Let's see what we got
   }
 
-/************  Write an Integer *******************/
-  Serial.println("\nWriting integer using sequential: ");
-  int tempInt1=-32768;                         // highest integer # is 32767
-  sram.WriteInt(0, tempInt1);                  // send tempInt1 to SRAM starting from address 0
+// /************  Write an Integer *******************/
+//   Serial.println("\nWriting integer using sequential: ");
+//   int tempInt1=-32768;                         // highest integer # is 32767
+//   sram.WriteInt(0, tempInt1);                  // send tempInt1 to SRAM starting from address 0
  
-/************ Read an Integer from Memory into an Int **********/
-  Serial.println("Reading integer using sequential: ");
-  int tempInt2=sram.ReadInt(0);                // Read integer from memory address 0
-  Serial.println(tempInt2);                    // print as integer
+// /************ Read an Integer from Memory into an Int **********/
+//   Serial.println("Reading integer using sequential: ");
+//   int tempInt2=sram.ReadInt(0);                // Read integer from memory address 0
+//   Serial.println(tempInt2);                    // print as integer
 
-/************  Write an Unsigned Integer *******************/
-  Serial.println("\nWriting unsigned integer using sequential: ");
-  unsigned int tempUnsignedInt1=65535;         // highest unsigned integer is 65535
-  sram.WriteInt(0, tempUnsignedInt1);          // send tempUnsignedInt1 to SRAM starting from address 0
+// /************  Write an Unsigned Integer *******************/
+//   Serial.println("\nWriting unsigned integer using sequential: ");
+//   unsigned int tempUnsignedInt1=65535;         // highest unsigned integer is 65535
+//   sram.WriteInt(0, tempUnsignedInt1);          // send tempUnsignedInt1 to SRAM starting from address 0
  
-/************ Read an Unsigned Integer from Memory into an Int **********/
-  Serial.println("Reading unsigned integer using sequential: ");
-  unsigned int tempUnsignedInt2=sram.ReadUnsignedInt(0);     // Read integer from memory address 0
-  Serial.println(tempUnsignedInt2);            // print as unsigned integer
+// /************ Read an Unsigned Integer from Memory into an Int **********/
+//   Serial.println("Reading unsigned integer using sequential: ");
+//   unsigned int tempUnsignedInt2=sram.ReadUnsignedInt(0);     // Read integer from memory address 0
+//   Serial.println(tempUnsignedInt2);            // print as unsigned integer
 
-/************  Write Long *******************/
-  Serial.println("\nWriting long using sequential: ");
-  long tempLong1=2147483647;                   // highest long #
-  sram.WriteLong(0, tempLong1);                // send tempLong1 to SRAM starting from address 0
+// /************  Write Long *******************/
+//   Serial.println("\nWriting long using sequential: ");
+//   long tempLong1=2147483647;                   // highest long #
+//   sram.WriteLong(0, tempLong1);                // send tempLong1 to SRAM starting from address 0
 
-/************ Read Long from Memory **********/
-  Serial.println("Reading long using sequential: ");
-  long tempLong2=sram.ReadLong(0);             // Read long from memory address 0
-  Serial.println(tempLong2);                   // print as long
+// /************ Read Long from Memory **********/
+//   Serial.println("Reading long using sequential: ");
+//   long tempLong2=sram.ReadLong(0);             // Read long from memory address 0
+//   Serial.println(tempLong2);                   // print as long
 
-/************  Write Unsigned Long *******************/
-  Serial.println("\nWriting unsigned long using sequential: ");
-  long tempUnsignedLong1=4294967295;           // highest unsigned long #
-  sram.WriteUnsignedLong(0, tempUnsignedLong1);        // send tempUnsignedLong1 to SRAM starting from address 0
+// /************  Write Unsigned Long *******************/
+//   Serial.println("\nWriting unsigned long using sequential: ");
+//   long tempUnsignedLong1=4294967295;           // highest unsigned long #
+//   sram.WriteUnsignedLong(0, tempUnsignedLong1);        // send tempUnsignedLong1 to SRAM starting from address 0
 
-/************ Read Unsigned Long from Memory **********/
-  Serial.println("Reading unsigned long using sequential: ");
-  unsigned long tempUnsignedLong2=sram.ReadUnsignedLong(0);  // Read unsigned long from memory address 0
-  Serial.println(tempUnsignedLong2);                   // print as unsigned long
+// /************ Read Unsigned Long from Memory **********/
+//   Serial.println("Reading unsigned long using sequential: ");
+//   unsigned long tempUnsignedLong2=sram.ReadUnsignedLong(0);  // Read unsigned long from memory address 0
+//   Serial.println(tempUnsignedLong2);                   // print as unsigned long
 
-/************  Write a Float using Sequential *******************/
-  Serial.println("\nWriting float using sequential: ");
-  float tempFloat1=3.141593;                   // a float #
-  sram.WriteFloat(0, tempFloat1);              // send tempFloat1 to SRAM starting at address 0
+// /************  Write a Float using Sequential *******************/
+//   Serial.println("\nWriting float using sequential: ");
+//   float tempFloat1=3.141593;                   // a float #
+//   sram.WriteFloat(0, tempFloat1);              // send tempFloat1 to SRAM starting at address 0
 
-/************ Read Float from Memory into a Float **********/
-  Serial.println("Reading float using sequential: ");
-  float tempFloat2=sram.ReadFloat(0);           // Read float from memory address 0
-  Serial.println(tempFloat2,6);                 // print as float
+// /************ Read Float from Memory into a Float **********/
+//   Serial.println("Reading float using sequential: ");
+//   float tempFloat2=sram.ReadFloat(0);           // Read float from memory address 0
+//   Serial.println(tempFloat2,6);                 // print as float
 }
 
 void loop()
