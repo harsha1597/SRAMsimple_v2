@@ -8,7 +8,6 @@
 #define SRAMsimple_h
 
 #include <Arduino.h>
-#include <SPI.h>
 #include "mbed.h"
 
 
@@ -30,40 +29,40 @@ using namespace mbed;
 
 class SRAMsimple {
   private:
-  uint8_t _message_format, _spi_mode;
-  uint32_t _freq;
+  uint8_t cs;
+  
   SPI& _spi;
   static SRAMsimple * _inst;
   
   public:
-    SRAMsimple(uint8_t message_format,uint8_t spi_mode,uint32_t freq, SPI& spi_param);
+    SRAMsimple( SPI& spi_param);
     ~SRAMsimple();
     void SetMode(uint32_t Mode);
     void ReadMode();
-    void WriteByte(uint32_t address, byte data_byte);
-    byte ReadByte(uint32_t address);
-    void WriteByteArray(uint32_t address, byte *data, uint16_t big);
-    void ReadByteArray(uint32_t address, byte *data, uint16_t big);
-    void WriteInt(uint32_t address, int data);  
-    int ReadInt(uint32_t address);
-    void WriteIntArray(uint32_t address, int *data, uint16_t big);
-    void ReadIntArray(uint32_t address, int *data, uint16_t big);
-    void WriteUnsignedInt(uint32_t address, unsigned int data);
-    unsigned int ReadUnsignedInt(uint32_t address);
-    void WriteUnsignedIntArray(uint32_t address, unsigned int *data, uint16_t big);
-    void ReadUnsignedIntArray(uint32_t address, unsigned int *data, uint16_t big);
-    void WriteLong(uint32_t address, long data);
-    long ReadLong(uint32_t address);
-    void WriteLongArray(uint32_t address, long *data, uint16_t big);
-    void ReadLongArray(uint32_t address, long *data, uint16_t big);
-    void WriteUnsignedLong(uint32_t address, unsigned long data);
-    unsigned long ReadUnsignedLong(uint32_t address);
-    void WriteUnsignedLongArray(uint32_t address, unsigned long *data, uint16_t big);
-    void ReadUnsignedLongArray(uint32_t address, unsigned long *data, uint16_t big);
-    void WriteFloat(uint32_t address, float data);
-    float ReadFloat(uint32_t address);
-    void WriteFloatArray(uint32_t address, float *data, uint16_t big);
-    void ReadFloatArray(uint32_t address, float *data, uint16_t big);
+    void WriteWord(uint32_t address, uint32_t data_byte);
+    uint32_t ReadWord(uint32_t address);
+    // void WriteByteArray(uint32_t address, byte *data, uint16_t big);
+    // void ReadByteArray(uint32_t address, byte *data, uint16_t big);
+    // void WriteInt(uint32_t address, int data);  
+    // int ReadInt(uint32_t address);
+    // void WriteIntArray(uint32_t address, int *data, uint16_t big);
+    // void ReadIntArray(uint32_t address, int *data, uint16_t big);
+    // void WriteUnsignedInt(uint32_t address, unsigned int data);
+    // unsigned int ReadUnsignedInt(uint32_t address);
+    // void WriteUnsignedIntArray(uint32_t address, unsigned int *data, uint16_t big);
+    // void ReadUnsignedIntArray(uint32_t address, unsigned int *data, uint16_t big);
+    // void WriteLong(uint32_t address, long data);
+    // long ReadLong(uint32_t address);
+    // void WriteLongArray(uint32_t address, long *data, uint16_t big);
+    // void ReadLongArray(uint32_t address, long *data, uint16_t big);
+    // void WriteUnsignedLong(uint32_t address, unsigned long data);
+    // unsigned long ReadUnsignedLong(uint32_t address);
+    // void WriteUnsignedLongArray(uint32_t address, unsigned long *data, uint16_t big);
+    // void ReadUnsignedLongArray(uint32_t address, unsigned long *data, uint16_t big);
+    // void WriteFloat(uint32_t address, float data);
+    // float ReadFloat(uint32_t address);
+    // void WriteFloatArray(uint32_t address, float *data, uint16_t big);
+    // void ReadFloatArray(uint32_t address, float *data, uint16_t big);
     static SRAMsimple * getInstance() {
         return _inst;
     };
