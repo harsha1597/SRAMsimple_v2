@@ -14,8 +14,8 @@ using namespace mbed;
 SRAMsimple::SRAMsimple(SPI& spi_param) : _spi(spi_param)
 {
   // SPI _spi(PC_3, PC_2, PI_1);           // MOSI,MISO,SCK, (CS not added here as it results in unexpected behaviour)
-  // _spi.frequency(freq);             // Set up your frequency.
-  // _spi.format(message_format, spi_mode);  // Messege length (bits), SPI_MODE - check these in your SPI decice's data sheet.
+  _spi.frequency(60000000);             // Set up your frequency.
+  _spi.format(32, 0);  // Message length (bits), SPI_MODE - check these in your SPI decice's data sheet.
 }
 SRAMsimple::~SRAMsimple(){/*nothing to destruct*/}
 

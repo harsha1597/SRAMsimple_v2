@@ -1,15 +1,15 @@
 # SRAMsimple
 Local SRAM library for 23AA04M chip
 
-This library was created from the example program SPIRamSimple.ino, created by J.B. Gallaher on 07/09/2016. From the comments of this program:
+This library was forked from [here](https://github.com/dndubins/SRAMsimple). From the comments of this program:
 
-Sample program to use a Serial SRAM chip to expand memory for an Arduino Uno giving access to an additional 128kB of random access memory.  The 23LC1024 uses the Serial Peripheral Interface (SPI) to transfer data and commands between the UNO and the memory chip.  Note that the functions could be extracted as a beginning for a library for this chip. [This is one such library - DD].
+Sample program to use a Serial SRAM chip to expand memory for an Arduino Portenta giving access to an additional 4Mbit of random access memory.  The 23AA04M uses the Serial Peripheral Interface (SPI) to transfer data and commands between the UNO and the memory chip.  Note that the functions could be extracted as a beginning for a library for this chip. [This is one such library - DD].
    
    Used the following components:
    
-   (1) Arduino Uno
+   (1) Arduino Portenta
    
-   (2) Microchip 23LC1024 SPI SRAM chip soldered on an Arduino Protoshield
+   (2) Microchip 23AA04M SPI SRAM chip soldered on a PCB
 
 Function Properties:
 
