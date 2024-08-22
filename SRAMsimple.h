@@ -10,6 +10,8 @@
 #include <Arduino.h>
 #include <SPI.h>
 #include "mbed.h"
+
+
 /************SRAM opcodes: commands for the 23AA04M SRAM memory chip ******************/
 #define RDSR        0x05000000 // Read status register
 #define WRSR        0x01000000
@@ -24,16 +26,19 @@ extern byte CS;		    // Global variable for CS pin (default 10)
 
 using namespace mbed;
 
-SPI spi(PC_3, PC_2, PI_1);            // MOSI,MISO,SCK, (CS not added here as it results in unexpected behaviour)
-spi.frequency(100000000);             // Set up your frequency.
-spi.format(32, 0);                  // Messege length (bits), SPI_MODE - check these in your SPI decice's data sheet.
-  
+
 
 class SRAMsimple {
+  private:
+  uint8_t _message_format, _spi_mode;
+  uint32_t _freq;
+  SPI& _spi;
+  static SRAMsimple * _inst;
+  
   public:
-    SRAMsimple();
+    SRAMsimple(uint8_t message_format,uint8_t spi_mode,uint32_t freq, SPI& spi_param);
     ~SRAMsimple();
-    void SetMode(byte CSpin, char Mode);
+    void SetMode(uint32_t Mode);
     void ReadMode();
     void WriteByte(uint32_t address, byte data_byte);
     byte ReadByte(uint32_t address);
@@ -59,6 +64,9 @@ class SRAMsimple {
     float ReadFloat(uint32_t address);
     void WriteFloatArray(uint32_t address, float *data, uint16_t big);
     void ReadFloatArray(uint32_t address, float *data, uint16_t big);
+    static SRAMsimple * getInstance() {
+        return _inst;
+    };
 };
 
 #endif
