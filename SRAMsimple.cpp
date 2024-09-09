@@ -69,17 +69,97 @@ uint32_t SRAMsimple::ReadWord(uint32_t address) {
   return read_word;                              // send data back to the calling function
 }
 
-// /*********** Sequential data transfer functions using Arrays ************************/
-// void SRAMsimple::WriteByteArray(uint32_t address, byte *data, uint16_t big){
-//   SetMode(CS,Sequential);                // set to send/receive multiple bytes of data
-//   digitalWrite(CS, LOW);                          // start new command sequence
-//   _spi.write(WRITE);                            // send WRITE command
-//   _spi.write((byte)(address >> 16));            // send high byte of address
-//   _spi.write((byte)(address >> 8));             // send middle byte of address
-//   _spi.write((byte)address);                    // send low byte of address
-//   _spi.write(data, big);                        // transfer an array of data => needs array name & size
-//   digitalWrite(CS, HIGH);                         // set SPI slave select HIGH
-// }
+// SPI SRAM Malloc
+uint32_t SRAMsimple::SRAMMalloc(size_t size) {
+    if (SRAM_ADDR + size >= SRAM_SIZE) {
+        // No more memory available in external SRAM
+        return 0xFFFFFFFF; 
+    }
+
+    uint32_t allocated_address = SRAM_ADDR;
+    SRAM_ADDR += size;
+    return allocated_address;
+}
+// Writes a byte array into SRAM at a specific location
+void SRAMsimple::SpiWriteByteArray(uint32_t address, uint8_t *data, size_t size)
+{  
+    digitalWrite(CS,LOW);
+    spi.write((uint8_t)WRITE);
+    spi.write((uint8_t)((address >> 16)& 0xFF));
+    spi.write((uint8_t)((address >> 8)& 0xFF));
+    spi.write((uint8_t)address);
+    for(size_t i=0;i<size;i++)
+    {
+      spi.write(data[i]);
+    }
+    
+    digitalWrite(CS,HIGH);
+}
+//uint16_t value;
+
+// Reads bytes into an array
+void SRAMsimple::SpiReadByteArray(uint32_t address, uint16_t size, uint8_t* readarray)
+{
+
+    
+    digitalWrite(CS,LOW);
+    spi.write((uint8_t)READ);
+    spi.write((uint8_t)((address >> 16)& 0xFF));
+    spi.write((uint8_t)((address >> 8)& 0xFF));
+    spi.write((uint8_t)address);
+    for(int i=0;i<size;i++)
+    {
+      readarray[i] = spi.write((uint8_t)0);
+    }
+    digitalWrite(CS,HIGH);
+    
+}
+
+// Reads file in SD card in chunks into a buffer and writes it into the SD card
+void SRAMsimple::WriteFileInChunks(const char* filepath, size_t chunk_size = 32*100) {
+    
+    FILE *file = fopen(filepath, "r");
+
+    // Buffer to hold each chunk
+    uint8_t buffer[chunk_size];
+
+    // fread returns chunk size
+    size_t bytesRead;
+    uint32_t file_size=0;
+    uint32_t address=0;
+    uint32_t file_address;
+
+    if (file == NULL) {
+        Serial.println("Failed to open file.");
+        return ;
+    }
+    
+    while ((bytesRead = fread(buffer, 1, chunk_size, file)) > 0) {
+
+        address = SRAMMalloc(bytesRead);
+
+        if (address!= 0xFFFFFFFF){
+            if (file_size==0)
+            {
+                // Save initial file address
+                file_address = address;
+                
+            }
+        
+        SpiWriteByteArray(address,buffer,bytesRead);
+        file_size+=bytesRead;
+        }
+    }
+    
+    // Close the file after reading
+    fclose(file);
+    model_data.address = address;
+    model_data.size = file_size;
+    
+    Serial.println("File reading completed.");
+    
+}
+
 
 // void SRAMsimple::ReadByteArray(uint32_t address, byte *data, uint16_t big){
 //   SetMode(CS,Sequential);                         // set to send/receive multiple bytes of data
